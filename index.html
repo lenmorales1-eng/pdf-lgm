@@ -1,11 +1,1218 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="refresh" content="0; url=./índice.html">
-    <title>OmniDoc Studio</title>
-  </head>
-  <body>
-    <p>Abriendo OmniDoc Studio… <a href="./índice.html">Pulsa aquí si no abre.</a></p>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#312e81">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="OmniDoc Studio">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <title>OmniDoc Studio - Conversor Universal a PDF y Centro de Compartición</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            },
+            accent: {
+              green: '#10b981',
+              emerald: '#059669',
+              amber: '#f59e0b',
+              blue: '#0284c7',
+              red: '#ef4444'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Cropper.js CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+
+  <!-- SweetAlert2 CSS & JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- External Conversion Libraries -->
+  <!-- PDF.js for reading and rendering PDF documents -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- html2pdf.js / jsPDF / html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Mammoth.js for Word (.docx) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <!-- SheetJS for Excel (.xlsx, .xls, .csv) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- Browser-side Office exports -->
+  <script src="https://unpkg.com/docx@9.15.1/dist/index.iife.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@4.0.1/dist/pptxgen.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- Cropper.js for image crop -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Barra de Navegación Superior -->
+  <header class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 dark:border-slate-700 shadow-sm">
+    <div class="site-header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary-600 to-indigo-400 flex items-center justify-center text-white shadow-md shadow-primary-500/20">
+          <i class="fa-solid fa-file-pdf text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            OmniDoc Studio
+            <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-primary-100 dark:bg-primary-950/70 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800">PRO</span>
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Conversor Universal a PDF & Centro de Distribución</p>
+        </div>
+      </div>
+
+      <!-- Herramientas globales rápidas -->
+      <div class="header-tools flex items-center space-x-2 sm:space-x-3">
+        <!-- Botón Global: Abrir Documento -->
+        <button id="openGlobalDocBtn" title="Abrir cualquier documento (PDF, Word, Excel, TXT...) [Ctrl+O]" class="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white shadow-md shadow-primary-500/20 transition flex items-center gap-1.5 cursor-pointer">
+          <i class="fa-solid fa-folder-open text-sm"></i>
+          <span>Abrir Documento</span>
+          <span class="text-[10px] bg-white/20 px-1.5 py-0.2 rounded font-mono hidden md:inline">Ctrl+O</span>
+        </button>
+        <input type="file" id="globalDocFileInput" accept=".pdf,.docx,.xlsx,.xls,.csv,.pptx,.txt,.md,.log,.json,.html,.htm,.png,.jpg,.jpeg,.webp" class="hidden">
+        <button id="pwaInstallBtn" title="Instalar OmniDoc Studio en este dispositivo" class="px-3 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-download"></i><span>Instalar app</span>
+        </button>
+
+        <!-- Selector de Modo Oscuro -->
+        <button id="themeToggleBtn" title="Cambiar Tema" class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 transition">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+
+        <!-- Limpiar Todo -->
+        <button id="clearAllBtn" title="Restablecer todo" class="px-3 py-1.5 text-xs font-medium rounded-lg border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-trash-can"></i>
+          <span class="hidden sm:inline">Nuevo Doc</span>
+        </button>
+
+        <!-- Guía Rápida -->
+        <button id="helpBtn" title="Ayuda y Atajos" class="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60 flex items-center justify-center text-slate-600 dark:text-slate-300 transition">
+          <i class="fa-solid fa-circle-question"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal: 2 Columnas (Selector de Fuentes a la Izquierda / Visor y Distribución a la Derecha) -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- COLUMNA IZQUIERDA: Selector de Orígenes de Datos (5 columnas en LG) -->
+    <div class="lg:col-span-5 flex flex-col space-y-4">
+      
+      <!-- Selector de Pestañas / Tipos de Archivo -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 p-2 shadow-sm">
+        <label class="block text-xs font-semibold uppercase text-slate-400 dark:text-slate-500 px-3 pt-1 pb-2">
+          ¿Qué deseas hacer con tu documento?
+        </label>
+        <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-1.5" id="sourceTabs">
+          <!-- Tab 1: Abrir Documento / PDF (Lector) -->
+          <button data-tab="open" class="tab-btn active flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition">
+            <i class="fa-solid fa-folder-open text-lg mb-1 text-primary-500"></i>
+            <span>Abrir Doc</span>
+          </button>
+
+          <!-- Tab 2: Unir PDFs Externos -->
+          <button data-tab="merge" class="tab-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition">
+            <i class="fa-solid fa-layer-group text-lg mb-1 text-purple-500"></i>
+            <span>Unir PDFs</span>
+          </button>
+
+          <!-- Tab 3: Imágenes -->
+          <button data-tab="images" class="tab-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition">
+            <i class="fa-regular fa-images text-lg mb-1"></i>
+            <span>Imágenes</span>
+          </button>
+          
+          <!-- Tab 4: Recorte / Captura -->
+          <button data-tab="crop" class="tab-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition">
+            <i class="fa-solid fa-crop-simple text-lg mb-1"></i>
+            <span>Recorte</span>
+          </button>
+
+          <!-- Tab 5: Word -->
+          <button data-tab="word" class="tab-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition">
+            <i class="fa-regular fa-file-word text-lg mb-1 text-blue-500"></i>
+            <span>Word</span>
+          </button>
+
+          <!-- Tab 6: Excel -->
+          <button data-tab="excel" class="tab-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition">
+            <i class="fa-regular fa-file-excel text-lg mb-1 text-emerald-500"></i>
+            <span>Excel</span>
+          </button>
+
+          <!-- Tab 7: Nota / Texto -->
+          <button data-tab="notes" class="tab-btn flex flex-col items-center justify-center py-2.5 px-2 rounded-xl text-xs font-semibold transition">
+            <i class="fa-solid fa-pen-fancy text-lg mb-1 text-amber-500"></i>
+            <span>Nota</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- CONTENIDO DE LAS PESTAÑAS -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 p-5 shadow-sm flex-1 flex flex-col">
+
+        <!-- PANEL 0: ABRIR DOCUMENTOS (PDF, WORD, EXCEL, TXT, MD) -->
+        <div id="tab-panel-open" class="tab-panel flex flex-col flex-1 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-folder-open text-primary-500"></i>
+                Lector & Visor de Documentos
+              </h2>
+              <p class="text-xs text-slate-500">Abre y visualiza PDFs, Word, Textos, Markdown u Hojas de Cálculo</p>
+            </div>
+            <span class="text-xs bg-primary-50 dark:bg-primary-950/70 text-primary-700 dark:text-primary-300 font-mono px-2 py-0.5 rounded-md border border-primary-200 dark:border-primary-800">
+              PDF & Docs
+            </span>
+          </div>
+
+          <!-- Dropzone Universal para Abrir Documentos -->
+          <div id="openDocDropZone" class="border-2 border-dashed border-primary-300 dark:border-primary-700 hover:border-primary-500 dark:hover:border-primary-400 rounded-xl p-7 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 bg-primary-50/20 dark:bg-slate-850 group">
+            <input type="file" id="openDocFileInput" accept=".pdf,.docx,.xlsx,.xls,.csv,.pptx,.txt,.md,.log,.json,.html,.htm,.rtf" class="hidden">
+            <div class="w-14 h-14 rounded-2xl bg-primary-100 dark:bg-primary-950/80 flex items-center justify-center text-primary-600 dark:text-primary-400 text-2xl shadow-inner group-hover:scale-105 transition-transform">
+              <i class="fa-solid fa-book-open"></i>
+            </div>
+            <div class="text-xs font-bold text-slate-800 dark:text-slate-100">
+              Haz clic o arrastra aquí tu documento para abrirlo
+            </div>
+            <p class="text-[11px] text-slate-400 max-w-xs">
+              Soporta <strong class="text-primary-600 dark:text-primary-400">PDFs existentes</strong>, Word (.docx), Excel (.xlsx, .csv), PowerPoint (.pptx) y archivos de texto (.txt, .md).
+            </p>
+          </div>
+
+          <!-- Estado del Documento Cargado -->
+          <div id="openDocStatus" class="hidden p-3.5 rounded-xl bg-slate-50 dark:bg-slate-750 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <div class="flex items-center gap-3 truncate">
+              <div class="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center flex-shrink-0">
+                <i id="openDocIcon" class="fa-solid fa-file-pdf text-rose-500 text-xl"></i>
+              </div>
+              <div class="truncate">
+                <p id="openDocName" class="text-xs font-bold text-slate-900 dark:text-white truncate">documento.pdf</p>
+                <p id="openDocMeta" class="text-[10px] text-slate-500 font-mono">12 páginas • 2.4 MB</p>
+              </div>
+            </div>
+            <button id="removeOpenDocBtn" class="px-2.5 py-1 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition font-medium flex items-center gap-1">
+              <i class="fa-solid fa-xmark"></i> Cerrar
+            </button>
+          </div>
+
+          <!-- Controles avanzados de visualización de PDF -->
+          <div id="pdfControlsWrapper" class="hidden space-y-3 p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-750/70 border border-slate-200 dark:border-slate-700 text-xs">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2">
+              <span class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                <i class="fa-solid fa-sliders text-primary-500"></i> Controles del Visor PDF
+              </span>
+              <!-- Modo de Vista -->
+              <select id="pdfViewModeSelect" class="bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-white">
+                <option value="all">Todas las Páginas (Continuo)</option>
+                <option value="single">Página por Página</option>
+              </select>
+            </div>
+
+            <!-- Navegación de páginas -->
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center space-x-1">
+                <button id="prevPdfPageBtn" title="Página Anterior" class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 disabled:opacity-40 transition">
+                  <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div class="flex items-center gap-1 px-1">
+                  <span class="text-slate-500 text-[11px]">Pág.</span>
+                  <input type="number" id="pdfPageNumInput" value="1" min="1" class="w-12 text-center bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg py-1 font-mono text-xs">
+                  <span id="pdfTotalPagesText" class="text-slate-500 text-[11px]">de 1</span>
+                </div>
+                <button id="nextPdfPageBtn" title="Página Siguiente" class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 disabled:opacity-40 transition">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+
+              <!-- Herramientas de texto -->
+              <div class="flex items-center gap-1.5">
+                <button id="extractPdfTextBtn" title="Extraer texto del PDF" class="px-2.5 py-1.5 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 rounded-lg font-semibold text-[11px] flex items-center gap-1 transition">
+                  <i class="fa-solid fa-file-lines"></i>
+                  <span>Extraer</span>
+                </button>
+                <button id="openInNotesBtn" title="Editar este documento en el redactor" class="px-2.5 py-1.5 bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 rounded-lg font-semibold text-[11px] flex items-center gap-1 transition">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                  <span>Nota</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Exportar PDF a formatos Office -->
+            <div class="border-t border-slate-200 dark:border-slate-700 pt-2.5 mt-2 space-y-2">
+              <span class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Convertir PDF a Office (contenido editable / presentación visual):</span>
+              <div class="grid grid-cols-3 gap-1.5">
+                <button id="pdfToWordBtn" class="px-2 py-2 bg-white dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-lg text-[11px] font-semibold text-blue-700 dark:text-blue-300 flex items-center justify-center gap-1.5 transition" title="Extraer texto del PDF a Word editable">
+                  <i class="fa-regular fa-file-word"></i><span>PDF a Word</span>
+                </button>
+                <button id="pdfToExcelBtn" class="px-2 py-2 bg-white dark:bg-slate-700 hover:bg-emerald-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-lg text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 flex items-center justify-center gap-1.5 transition" title="Exportar el texto del PDF a una hoja de Excel">
+                  <i class="fa-regular fa-file-excel"></i><span>PDF a Excel</span>
+                </button>
+                <button id="pdfToPowerPointBtn" class="px-2 py-2 bg-white dark:bg-slate-700 hover:bg-orange-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-lg text-[11px] font-semibold text-orange-700 dark:text-orange-300 flex items-center justify-center gap-1.5 transition" title="Crear una diapositiva por página del PDF">
+                  <i class="fa-solid fa-file-powerpoint"></i><span>PDF a PowerPoint</span>
+                </button>
+              </div>
+              <p class="text-[10px] text-slate-400">Word y Excel reciben texto extraído; PowerPoint conserva la apariencia de cada página como imagen.</p>
+            </div>
+
+            <!-- Botón de Acceso a Herramientas de Edición de PDF -->
+            <button id="togglePdfEditorModeBtn" class="w-full mt-2 py-2 px-3 bg-gradient-to-r from-indigo-600 via-primary-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition">
+              <i class="fa-solid fa-pen-ruler text-sm"></i>
+              <span>Editar PDF (Borrar, Añadir Texto, Firmar)</span>
+            </button>
+
+            <!-- GESTIÓN DE HOJAS DEL PDF (Añadir más hojas, Borrar hojas, Unir PDF) -->
+            <div class="border-t border-slate-200 dark:border-slate-700 pt-2.5 mt-2 space-y-1.5">
+              <span class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Páginas & Hojas del Documento:</span>
+              <div class="grid grid-cols-2 gap-1.5">
+                <button id="addBlankPageBtn" class="px-2 py-1.5 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-lg text-[11px] font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 transition" title="Insertar una nueva hoja en blanco A4">
+                  <i class="fa-solid fa-file-circle-plus text-primary-500"></i>
+                  <span>Añadir Hoja</span>
+                </button>
+                <button id="appendExternalPdfBtn" class="px-2 py-1.5 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-lg text-[11px] font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 transition" title="Unir o insertar otro PDF externo a este documento">
+                  <i class="fa-solid fa-paperclip text-purple-500"></i>
+                  <span>Unir otro PDF</span>
+                </button>
+              </div>
+              <input type="file" id="appendExternalPdfInput" accept=".pdf" class="hidden">
+              <button id="openPageOrganizerBtn" class="w-full py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-lg text-[11px] font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 transition" title="Ver miniaturas de todas las hojas para organizar, rotar o borrar">
+                <i class="fa-solid fa-table-cells-large text-emerald-500"></i>
+                <span>Gestor Visual de Páginas (Organizar / Borrar)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sugerencia rápida -->
+          <div class="text-xs text-slate-500 space-y-1.5 bg-slate-50 dark:bg-slate-750 p-3 rounded-xl border border-slate-100 dark:border-slate-700/60">
+            <p class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-bolt text-amber-500"></i> Funciones Rápidas con tus Documentos:
+            </p>
+            <ul class="list-disc pl-4 space-y-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+              <li><strong>Imprimir:</strong> Salida directa sin recortes ni distorsión.</li>
+              <li><strong>Compartir & WhatsApp:</strong> Envía el documento original con 1 solo clic.</li>
+              <li><strong>Arrastrar y soltar:</strong> Arrastra cualquier archivo desde Windows Explorer directamente a esta ventana.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PANEL 1: IMÁGENES -->
+        <div id="tab-panel-images" class="tab-panel hidden flex flex-col flex-1 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-regular fa-images text-primary-500"></i>
+                Imágenes a PDF
+              </h2>
+              <p class="text-xs text-slate-500">Sube una o varias fotos (JPG, PNG, WebP, etc.)</p>
+            </div>
+            <span id="imgCountBadge" class="text-xs bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full font-medium text-slate-600 dark:text-slate-300">0 fotos</span>
+          </div>
+
+          <!-- Drag and Drop Zone -->
+          <div id="imageDropZone" class="drop-zone border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-primary-500 dark:hover:border-primary-400 rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 bg-slate-50/50 dark:bg-slate-850">
+            <input type="file" id="imageInput" multiple accept="image/*" class="hidden">
+            <div class="w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-950/60 flex items-center justify-center text-primary-600 dark:text-primary-400 text-xl">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">
+              Haz clic o arrastra tus imágenes aquí
+            </div>
+            <p class="text-[11px] text-slate-400">Soporta múltiples imágenes combinadas en un solo PDF</p>
+          </div>
+
+          <!-- Galería / Miniaturas añadidas -->
+          <div class="flex-1 min-h-[160px] overflow-y-auto pr-1">
+            <div id="imagesList" class="grid grid-cols-3 gap-2">
+              <!-- Se rellenará dinámicamente -->
+            </div>
+            <div id="noImagesPlaceholder" class="text-center py-8 text-slate-400 text-xs">
+              <i class="fa-regular fa-image text-3xl mb-2 opacity-50 block"></i>
+              No hay imágenes cargadas aún.
+            </div>
+          </div>
+
+          <!-- Controles de Ajuste de Página para Imagen -->
+          <div class="border-t border-slate-100 dark:border-slate-700/60 pt-3 grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <label class="block text-slate-500 mb-1 font-medium">Disposición por página:</label>
+              <select id="imgFitMode" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-1.5 text-xs text-slate-800 dark:text-white">
+                <option value="single">1 Imagen por Página</option>
+                <option value="fit">Ajustar ancho automático</option>
+                <option value="grid2">Cuadrícula 2 columnas</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-500 mb-1 font-medium">Margen:</label>
+              <select id="imgMargin" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-1.5 text-xs text-slate-800 dark:text-white">
+                <option value="normal">Normal (10mm)</option>
+                <option value="compact">Compacto (5mm)</option>
+                <option value="zero">Sin márgenes (Borde a borde)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 2: RECORTE Y CAPTURA (SCREENSHOT / CROP / CLIPBOARD) -->
+        <div id="tab-panel-crop" class="tab-panel hidden flex flex-col flex-1 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-crop-simple text-primary-500"></i>
+                Recorte & Captura Inteligente
+              </h2>
+              <p class="text-xs text-slate-500">Recorta zonas específicas o pega capturas (Ctrl+V)</p>
+            </div>
+            <span class="text-[10px] font-mono bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-800">
+              Ctrl + V disponible
+            </span>
+          </div>
+
+          <!-- Zona de carga para recorte -->
+          <div id="cropDropZone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-3 text-center cursor-pointer hover:border-primary-500 transition bg-slate-50/50 dark:bg-slate-850">
+            <input type="file" id="cropFileInput" accept="image/*" class="hidden">
+            <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">
+              <i class="fa-solid fa-scissors mr-1 text-primary-500"></i>
+              Cargar imagen para recortar o presiona <strong class="text-primary-600 dark:text-primary-400">Ctrl+V</strong> para pegar captura
+            </p>
+          </div>
+
+          <!-- Contenedor del Cropper -->
+          <div class="flex-1 relative min-h-[220px] max-h-[300px] bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center">
+            <img id="cropperImage" class="max-w-full max-h-full block" alt="Imagen a recortar">
+            <div id="cropperPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 bg-slate-900/60 p-4 text-center">
+              <i class="fa-solid fa-paste text-3xl mb-2 text-slate-400"></i>
+              <span class="text-xs font-semibold">Pega una captura o sube una imagen</span>
+              <span class="text-[11px] text-slate-400 mt-1">Usa la herramienta de recorte de Windows (Win + Shift + S) y luego presiona Ctrl+V aquí</span>
+            </div>
+          </div>
+
+          <!-- Barra de Herramientas de Recorte -->
+          <div class="flex flex-wrap items-center justify-between gap-1.5 pt-1">
+            <div class="flex items-center space-x-1">
+              <button id="rotateLeftBtn" title="Girar Izquierda" class="crop-tool-btn">
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+              <button id="rotateRightBtn" title="Girar Derecha" class="crop-tool-btn">
+                <i class="fa-solid fa-rotate-right"></i>
+              </button>
+              <button id="flipXBtn" title="Invertir Horizontal" class="crop-tool-btn">
+                <i class="fa-solid fa-arrows-left-right"></i>
+              </button>
+              <button id="resetCropBtn" title="Restablecer" class="crop-tool-btn">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+              </button>
+            </div>
+
+            <!-- Aspect Ratio -->
+            <div class="flex items-center space-x-1 text-xs">
+              <span class="text-[11px] text-slate-400 mr-1">Proporción:</span>
+              <button data-aspect="free" class="aspect-btn active">Libre</button>
+              <button data-aspect="1" class="aspect-btn">1:1</button>
+              <button data-aspect="1.414" class="aspect-btn">A4</button>
+              <button data-aspect="1.777" class="aspect-btn">16:9</button>
+            </div>
+          </div>
+
+          <button id="applyCropBtn" class="w-full py-2.5 px-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-semibold text-xs transition shadow-sm flex items-center justify-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            Aplicar Recorte al Documento PDF
+          </button>
+        </div>
+
+        <!-- PANEL 3: WORD (.DOCX) -->
+        <div id="tab-panel-word" class="tab-panel hidden flex flex-col flex-1 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-regular fa-file-word text-blue-500"></i>
+                Documentos Word a PDF (.docx)
+              </h2>
+              <p class="text-xs text-slate-500">Convierte archivos de Microsoft Word conservando formato</p>
+            </div>
+            <span class="text-xs text-blue-600 font-mono bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded">.docx</span>
+          </div>
+
+          <!-- Dropzone Word -->
+          <div id="wordDropZone" class="border-2 border-dashed border-blue-200 dark:border-blue-900/60 hover:border-blue-500 dark:hover:border-blue-400 rounded-xl p-8 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 bg-blue-50/20 dark:bg-slate-850">
+            <input type="file" id="wordFileInput" accept=".docx" class="hidden">
+            <div class="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-950/80 flex items-center justify-center text-blue-600 dark:text-blue-400 text-2xl shadow-inner">
+              <i class="fa-solid fa-file-word"></i>
+            </div>
+            <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">
+              Selecciona o arrastra tu archivo Word (.docx)
+            </div>
+            <p class="text-[11px] text-slate-400">Procesamiento seguro 100% en tu navegador</p>
+          </div>
+
+          <div id="wordStatus" class="hidden p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-xs text-blue-800 dark:text-blue-200 flex items-center justify-between">
+            <div class="flex items-center gap-2 truncate">
+              <i class="fa-solid fa-circle-check text-blue-500"></i>
+              <span id="wordFileName" class="font-medium truncate">documento.docx</span>
+            </div>
+            <button id="removeWordBtn" class="text-rose-500 hover:text-rose-700 text-xs">Quitar</button>
+          </div>
+
+          <div class="text-xs text-slate-500 space-y-1 bg-slate-50 dark:bg-slate-750 p-3 rounded-xl">
+            <p class="font-medium text-slate-700 dark:text-slate-300">💡 Consejos para Word:</p>
+            <ul class="list-disc pl-4 space-y-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+              <li>Convierte encabezados, listas, tablas y formato tipográfico.</li>
+              <li>Podrás imprimirlo, guardarlo o compartirlo por WhatsApp en 1 clic.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- PANEL 4: EXCEL (.XLSX, .XLS, .CSV) -->
+        <div id="tab-panel-excel" class="tab-panel hidden flex flex-col flex-1 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-regular fa-file-excel text-emerald-500"></i>
+                Hojas de Cálculo Excel a PDF
+              </h2>
+              <p class="text-xs text-slate-500">Convierte libros de Excel (.xlsx, .xls) o CSV a tablas limpias</p>
+            </div>
+            <span class="text-xs text-emerald-600 font-mono bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">.xlsx / .csv</span>
+          </div>
+
+          <!-- Dropzone Excel -->
+          <div id="excelDropZone" class="border-2 border-dashed border-emerald-200 dark:border-emerald-900/60 hover:border-emerald-500 dark:hover:border-emerald-400 rounded-xl p-8 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 bg-emerald-50/20 dark:bg-slate-850">
+            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-2xl shadow-inner">
+              <i class="fa-solid fa-file-excel"></i>
+            </div>
+            <div class="text-xs font-semibold text-slate-700 dark:text-slate-200">
+              Selecciona o arrastra tu archivo Excel
+            </div>
+            <p class="text-[11px] text-slate-400">Compatible con múltiples hojas de cálculo</p>
+          </div>
+
+          <!-- Selector de Hoja si tiene varias -->
+          <div id="excelSheetSelectorWrapper" class="hidden">
+            <label class="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Seleccionar hoja a exportar:</label>
+            <select id="excelSheetSelect" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-xs font-medium">
+            </select>
+          </div>
+
+          <div id="excelStatus" class="hidden p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-200 flex items-center justify-between">
+            <div class="flex items-center gap-2 truncate">
+              <i class="fa-solid fa-circle-check text-emerald-500"></i>
+              <span id="excelFileName" class="font-medium truncate">reporte.xlsx</span>
+            </div>
+            <button id="removeExcelBtn" class="text-rose-500 hover:text-rose-700 text-xs">Quitar</button>
+          </div>
+        </div>
+
+        <!-- PANEL 5: NOTA RÁPIDA / REDACTAR -->
+        <div id="tab-panel-notes" class="tab-panel hidden flex flex-col flex-1 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-pen-fancy text-amber-500"></i>
+                Redactar Nota o Documento
+              </h2>
+              <p class="text-xs text-slate-500">Escribe o pega texto para generar un documento formal en PDF</p>
+            </div>
+            <!-- Botón plantilla formal -->
+            <button id="insertTemplateBtn" class="text-[11px] bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2 py-1 rounded-lg hover:bg-amber-100 transition">
+              <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Plantilla
+            </button>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Título del Documento:</label>
+            <input type="text" id="noteTitleInput" placeholder="Ej: Memorándum, Recibo de Entrega, Acta de Reunión..." class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary-500 text-slate-900 dark:text-white">
+          </div>
+
+          <!-- Barra de formato rápido de texto -->
+          <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-750 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+            <button class="format-btn" data-tag="b" title="Negrita"><i class="fa-solid fa-bold"></i></button>
+            <button class="format-btn" data-tag="i" title="Cursiva"><i class="fa-solid fa-italic"></i></button>
+            <button class="format-btn" data-tag="u" title="Subrayado"><i class="fa-solid fa-underline"></i></button>
+            <div class="h-4 w-px bg-slate-300 dark:bg-slate-600 mx-1"></div>
+            <button class="format-btn" data-tag="bullet" title="Lista con viñetas"><i class="fa-solid fa-list-ul"></i></button>
+            <button class="format-btn" data-tag="date" title="Insertar fecha actual"><i class="fa-regular fa-calendar-days"></i></button>
+            <button class="format-btn" data-tag="sig" title="Espacio para Firma"><i class="fa-solid fa-signature"></i></button>
+          </div>
+
+          <div class="flex-1 flex flex-col">
+            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Cuerpo de la Nota:</label>
+            <textarea id="noteContentInput" rows="7" placeholder="Escribe tu nota aquí o pega texto de cualquier lugar..." class="w-full flex-1 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary-500 font-sans leading-relaxed text-slate-900 dark:text-white resize-none"></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <label class="block text-slate-500 mb-1">Membrete / Encabezado:</label>
+              <input type="text" id="noteHeaderInput" placeholder="Ej: Mi Empresa / Mi Nombre" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-1.5 text-xs text-slate-800 dark:text-white">
+            </div>
+            <div>
+              <label class="block text-slate-500 mb-1">Pie de Página:</label>
+              <input type="text" id="noteFooterInput" placeholder="Ej: Confidencial / Tel: +12345678" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-1.5 text-xs text-slate-800 dark:text-white">
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 6: UNIR MÚLTIPLES PDFS EXTERNOS -->
+        <div id="tab-panel-merge" class="tab-panel hidden flex flex-col flex-1 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-layer-group text-purple-500"></i>
+                Unir Múltiples PDFs Externos
+              </h2>
+              <p class="text-xs text-slate-500">Combina 2 o más archivos PDF externos en un solo documento</p>
+            </div>
+            <span id="mergeFilesCountBadge" class="text-xs bg-purple-50 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300 font-mono px-2 py-0.5 rounded-md border border-purple-200 dark:border-purple-800">
+              0 archivos
+            </span>
+          </div>
+
+          <!-- Dropzone para Unir PDFs -->
+          <div id="mergeDropZone" class="border-2 border-dashed border-purple-300 dark:border-purple-700 hover:border-purple-500 dark:hover:border-purple-400 rounded-xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center space-y-2 bg-purple-50/20 dark:bg-slate-850 group">
+            <input type="file" id="mergeFileInput" multiple accept=".pdf" class="hidden">
+            <div class="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/80 flex items-center justify-center text-purple-600 dark:text-purple-400 text-xl shadow-inner group-hover:scale-105 transition-transform">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+            </div>
+            <div class="text-xs font-bold text-slate-800 dark:text-slate-100">
+              Haz clic o arrastra aquí todos los PDFs que deseas unir
+            </div>
+            <p class="text-[11px] text-slate-400">Selecciona varios archivos a la vez. Podrás ordenarlos antes de combinarlos.</p>
+          </div>
+
+          <!-- Lista interactiva de archivos PDF a unir -->
+          <div class="flex-1 min-h-[180px] max-h-[300px] overflow-y-auto space-y-2 pr-1">
+            <div id="mergeFilesList" class="space-y-2">
+              <!-- Rellenado dinámicamente -->
+            </div>
+            <div id="noMergeFilesPlaceholder" class="text-center py-10 text-slate-400 text-xs">
+              <i class="fa-regular fa-file-pdf text-3xl mb-2 opacity-40 block"></i>
+              No hay archivos PDF en la cola para unir aún.
+            </div>
+          </div>
+
+          <!-- Acciones de Combinación -->
+          <div class="border-t border-slate-100 dark:border-slate-700/60 pt-3 space-y-2">
+            <button id="mergeActionBtn" disabled class="w-full py-2.5 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-bold text-xs transition shadow flex items-center justify-center gap-2">
+              <i class="fa-solid fa-layer-group"></i>
+              <span>Unir PDFs en 1 Solo Documento</span>
+            </button>
+            <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+              <span>💡 Usa las flechas para ordenar qué PDF va primero</span>
+              <button id="clearMergeQueueBtn" class="text-rose-500 hover:text-rose-700 text-[11px] font-medium">Limpiar lista</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Configuración Global del Documento -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-sliders text-primary-500"></i>
+            Propiedades del PDF
+          </span>
+          <span class="text-[11px] text-slate-400">Personaliza la salida</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+          <div>
+            <label class="block text-slate-500 mb-1">Nombre de archivo:</label>
+            <input type="text" id="docFileName" value="Documento_OmniDoc" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-1.5 text-xs text-slate-900 dark:text-white font-medium">
+          </div>
+          <div>
+            <label class="block text-slate-500 mb-1">Orientación:</label>
+            <select id="docOrientation" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-1.5 text-xs text-slate-900 dark:text-white">
+              <option value="portrait">Vertical (Portrait)</option>
+              <option value="landscape">Horizontal (Landscape)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-500 mb-1">Formato:</label>
+            <select id="docFormat" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-1.5 text-xs text-slate-900 dark:text-white">
+              <option value="a4" selected>A4 (Estándar)</option>
+              <option value="letter">Carta (Letter)</option>
+              <option value="legal">Oficio (Legal)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLUMNA DERECHA: Vista Previa en Vivo & Panel de Acciones (7 columnas en LG) -->
+    <div class="lg:col-span-7 flex flex-col space-y-4">
+
+      <!-- BARRA DE ACCIONES (LOS BOTONES SOLICITADOS: Imprimir, Compartir, Correo, WhatsApp, Drive, OneDrive) -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-4 shadow-lg border border-slate-800">
+        <div class="flex items-center justify-between mb-3 border-b border-white/10 pb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <h3 class="text-sm font-bold tracking-tight">Centro de Distribución & Salida</h3>
+          </div>
+          <span class="text-[11px] text-slate-300 font-mono">1-Click Actions</span>
+        </div>
+
+        <!-- Cuadrícula de Botones Principales -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-2">
+          
+          <!-- Botón 1: IMPRIMIR -->
+          <button id="actionPrintBtn" class="action-btn bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-white" title="Imprimir directamente">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-sm mb-1.5">
+              <i class="fa-solid fa-print"></i>
+            </div>
+            <span class="text-xs font-bold">Imprimir</span>
+            <span class="text-[10px] text-slate-400 font-normal">Físico / Impresora</span>
+          </button>
+
+          <!-- Botón 2: DESCARGAR PDF -->
+          <button id="actionDownloadBtn" class="action-btn bg-primary-600 hover:bg-primary-500 border border-primary-500 text-white shadow-md shadow-primary-600/30" title="Descargar archivo PDF al disco">
+            <div class="w-8 h-8 rounded-lg bg-white/20 text-white flex items-center justify-center text-sm mb-1.5">
+              <i class="fa-solid fa-file-arrow-down"></i>
+            </div>
+            <span class="text-xs font-bold">Descargar</span>
+            <span class="text-[10px] text-primary-200 font-normal">Guardar en PDF</span>
+          </button>
+
+          <!-- Botón 3: COMPARTIR (Web Share API) -->
+          <button id="actionShareBtn" class="action-btn bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-white" title="Compartir archivo con apps del sistema">
+            <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm mb-1.5">
+              <i class="fa-solid fa-share-nodes"></i>
+            </div>
+            <span class="text-xs font-bold">Compartir</span>
+            <span class="text-[10px] text-slate-400 font-normal">Sistema / Redes</span>
+          </button>
+
+          <!-- Botón 4: WHATSAPP -->
+          <button id="actionWhatsAppBtn" class="action-btn bg-slate-800/80 hover:bg-emerald-950/40 border border-emerald-500/40 text-white" title="Enviar vía WhatsApp">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm mb-1.5">
+              <i class="fa-brands fa-whatsapp text-base"></i>
+            </div>
+            <span class="text-xs font-bold text-emerald-300">WhatsApp</span>
+            <span class="text-[10px] text-slate-400 font-normal">Chat o Grupo</span>
+          </button>
+
+          <!-- Botón 5: CORREO ELECTRÓNICO -->
+          <button id="actionEmailBtn" class="action-btn bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-white" title="Enviar por Email">
+            <div class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center text-sm mb-1.5">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <span class="text-xs font-bold">Gmail</span>
+            <span class="text-[10px] text-slate-400 font-normal">Iniciar sesión / enviar</span>
+          </button>
+
+          <!-- Botón 6: GOOGLE DRIVE -->
+          <button id="actionDriveBtn" class="action-btn bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-white" title="Guardar o abrir en Google Drive">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm mb-1.5">
+              <i class="fa-brands fa-google-drive"></i>
+            </div>
+            <span class="text-xs font-bold">Google Drive</span>
+            <span class="text-[10px] text-slate-400 font-normal">Nube Google</span>
+          </button>
+
+          <!-- Botón 7: ONEDRIVE -->
+          <button id="actionOneDriveBtn" class="action-btn bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-white" title="Guardar o abrir en OneDrive">
+            <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center text-sm mb-1.5">
+              <i class="fa-solid fa-cloud text-sky-400"></i>
+            </div>
+            <span class="text-xs font-bold">OneDrive</span>
+            <span class="text-[10px] text-slate-400 font-normal">Microsoft Cloud</span>
+          </button>
+
+          <!-- Botón 8: COPIAR PORTAPAPELES / VISTA PREVIA RÁPIDA -->
+          <button id="actionCopyPreviewBtn" class="action-btn bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-white" title="Refrescar visualización">
+            <div class="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center text-sm mb-1.5">
+              <i class="fa-solid fa-arrows-rotate"></i>
+            </div>
+            <span class="text-xs font-bold">Actualizar</span>
+            <span class="text-[10px] text-slate-400 font-normal">Vista Previa</span>
+          </button>
+
+          <!-- Botón 9: VER DOCUMENTO COMPLETO / IMPRIMIR -->
+          <button id="actionFullPreviewBtn" class="action-btn bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-white col-span-2 sm:col-span-1" title="Abrir el archivo completo e imprimir">
+            <div class="w-8 h-8 rounded-lg bg-violet-500/20 text-violet-400 flex items-center justify-center text-sm mb-1.5">
+              <i class="fa-solid fa-expand"></i>
+            </div>
+            <span class="text-xs font-bold">Abrir completo</span>
+            <span class="text-[10px] text-slate-400 font-normal">Ver e imprimir</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- VISOR PREVIO DEL DOCUMENTO EN TIEMPO REAL -->
+      <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 shadow-sm flex-1 flex flex-col overflow-hidden min-h-[500px]">
+        <!-- Cabecera del visor -->
+        <div class="px-5 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50/70 dark:bg-slate-850/70">
+          <div class="flex items-center space-x-2">
+            <div class="w-3 h-3 rounded-full bg-rose-400"></div>
+            <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+            <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 ml-2">
+              Hoja de Impresión A4
+            </span>
+          </div>
+
+          <div class="flex items-center space-x-2 text-xs">
+            <!-- Zoom del visor -->
+            <button id="zoomOutBtn" class="w-7 h-7 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+            <span id="zoomLevelText" class="font-mono text-slate-500 w-12 text-center">100%</span>
+            <button id="zoomInBtn" class="w-7 h-7 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- BARRA DE HERRAMIENTAS DE EDICIÓN DE PDF (BORRAR, AÑADIR TEXTO, FIRMAR, RESALTAR) -->
+        <div id="pdfEditorToolbar" class="hidden bg-slate-900 text-white border-b border-slate-700 px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs shadow-md z-30 transition-all select-none">
+          <!-- Herramientas Principales -->
+          <div class="flex items-center flex-wrap gap-1" id="pdfToolGroup">
+            <!-- Puntero / Navegar -->
+            <button data-tool="pan" class="pdf-edit-tool-btn active px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition" title="Modo Navegación">
+              <i class="fa-solid fa-arrow-pointer text-xs"></i>
+              <span>Ver</span>
+            </button>
+
+            <!-- Borrador / Tapar Blanco -->
+            <button data-tool="whiteout" class="pdf-edit-tool-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-950/60 text-rose-300 border border-rose-800/60 hover:bg-rose-900/60 flex items-center gap-1 transition" title="Borrador / Tapar (Dibuja un rectángulo blanco para borrar texto o manchas)">
+              <i class="fa-solid fa-eraser text-xs"></i>
+              <span>Borrar / Tapar</span>
+            </button>
+
+            <!-- Añadir Texto -->
+            <button data-tool="text" class="pdf-edit-tool-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-950/60 text-sky-300 border border-sky-800/60 hover:bg-sky-900/60 flex items-center gap-1 transition" title="Añadir texto nuevo (Haz clic en el PDF)">
+              <i class="fa-solid fa-i-cursor text-xs"></i>
+              <span>Añadir Texto</span>
+            </button>
+
+            <!-- Dibujar / Firmar -->
+            <button data-tool="draw" class="pdf-edit-tool-btn px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-slate-800 flex items-center gap-1 transition" title="Dibujar o Firmar a mano alzada">
+              <i class="fa-solid fa-pen text-xs text-amber-400"></i>
+              <span>Firma / Lapicero</span>
+            </button>
+
+            <!-- Resaltador -->
+            <button data-tool="highlighter" class="pdf-edit-tool-btn px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-slate-800 flex items-center gap-1 transition" title="Resaltador translúcido">
+              <i class="fa-solid fa-highlighter text-xs text-yellow-400"></i>
+              <span>Resaltar</span>
+            </button>
+
+            <!-- Sellos Rápidos -->
+            <button data-tool="stamp" class="pdf-edit-tool-btn px-2.5 py-1 rounded-lg text-xs font-semibold hover:bg-slate-800 flex items-center gap-1 transition" title="Insertar sellos (Aprobado, Pagado, etc.)">
+              <i class="fa-solid fa-stamp text-xs text-emerald-400"></i>
+              <span>Sellos</span>
+            </button>
+          </div>
+
+          <!-- Opciones contextuales: Color, Tamaño, Deshacer, Guardar -->
+          <div class="flex items-center flex-wrap gap-2 text-xs">
+            <!-- Paleta de Color -->
+            <div id="pdfToolColorPicker" class="flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-lg border border-slate-700">
+              <button class="pdf-color-btn active w-4 h-4 rounded-full bg-white border border-slate-400" data-color="#ffffff" title="Blanco (Borrador)"></button>
+              <button class="pdf-color-btn w-4 h-4 rounded-full bg-black border border-slate-600" data-color="#000000" title="Negro"></button>
+              <button class="pdf-color-btn w-4 h-4 rounded-full bg-blue-600" data-color="#2563eb" title="Azul"></button>
+              <button class="pdf-color-btn w-4 h-4 rounded-full bg-red-600" data-color="#dc2626" title="Rojo"></button>
+              <button class="pdf-color-btn w-4 h-4 rounded-full bg-amber-400" data-color="#f59e0b" title="Amarillo / Resaltador"></button>
+              <button class="pdf-color-btn w-4 h-4 rounded-full bg-emerald-500" data-color="#10b981" title="Verde"></button>
+            </div>
+
+            <!-- Selector de Grosor -->
+            <div id="pdfToolSizePicker" class="flex items-center gap-1 bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700">
+              <select id="pdfToolSizeSelect" class="bg-transparent text-white text-[11px] outline-none cursor-pointer">
+                <option value="2" class="bg-slate-800">Fino (2px)</option>
+                <option value="4" selected class="bg-slate-800">Medio (4px)</option>
+                <option value="8" class="bg-slate-800">Grueso (8px)</option>
+                <option value="16" class="bg-slate-800">Muy Grueso (16px)</option>
+                <option value="28" class="bg-slate-800">Borrador Ancho (28px)</option>
+              </select>
+            </div>
+
+            <!-- Deshacer / Rehacer -->
+            <div class="flex items-center gap-1">
+              <button id="pdfUndoBtn" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition" title="Deshacer (Ctrl+Z)">
+                <i class="fa-solid fa-rotate-left text-xs"></i>
+              </button>
+              <button id="pdfRedoBtn" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition" title="Rehacer (Ctrl+Y)">
+                <i class="fa-solid fa-rotate-right text-xs"></i>
+              </button>
+            </div>
+
+            <!-- Acciones Rápidas de Hojas / Páginas -->
+            <div class="flex items-center gap-1 border-l border-slate-700 pl-2">
+              <button id="toolbarAddBlankPageBtn" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center gap-1 text-[11px] transition" title="Añadir hoja en blanco al PDF">
+                <i class="fa-solid fa-plus text-primary-400"></i>
+                <span class="hidden sm:inline">+ Hoja</span>
+              </button>
+              <button id="toolbarAppendPdfBtn" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center gap-1 text-[11px] transition" title="Unir o insertar otro PDF externo">
+                <i class="fa-solid fa-paperclip text-purple-400"></i>
+                <span class="hidden sm:inline">Unir PDF</span>
+              </button>
+              <button id="toolbarOrganizePagesBtn" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center gap-1 text-[11px] transition" title="Organizador visual de páginas (Reordenar y Borrar)">
+                <i class="fa-solid fa-table-cells-large text-emerald-400"></i>
+                <span class="hidden sm:inline">Organizar</span>
+              </button>
+            </div>
+
+            <!-- Guardar Cambios -->
+            <button id="pdfSaveEditsBtn" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-1.5 shadow transition" title="Aplicar y guardar cambios en el PDF">
+              <i class="fa-solid fa-floppy-disk text-xs"></i>
+              <span>Guardar PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Área de lienzo imprimible con scroll -->
+        <div id="previewScrollArea" class="flex-1 bg-slate-200/70 dark:bg-slate-950 p-4 sm:p-8 overflow-auto flex justify-center items-start">
+          
+          <!-- ESTE CONTENEDOR ES EXACTAMENTE LO QUE SE CONVIERTE A PDF / SE IMPRIME -->
+          <div id="pdfPrintableArea" class="printable-sheet bg-white text-slate-900 shadow-2xl transition-transform origin-top">
+            
+            <!-- Encabezado corporativo/documental -->
+            <div id="docHeaderPreview" class="border-b border-slate-200 pb-3 mb-6 hidden">
+              <div class="flex justify-between items-center text-xs text-slate-500">
+                <span id="headerBrandText" class="font-bold uppercase tracking-wider text-primary-600">OmniDoc Studio</span>
+                <span id="headerDateText" class="font-mono">Fecha: 31/10/2026</span>
+              </div>
+            </div>
+
+            <!-- Título Principal del Documento -->
+            <div id="docTitlePreviewContainer" class="mb-5">
+              <h1 id="previewMainTitle" class="text-2xl font-black text-slate-900 tracking-tight leading-tight">Documento sin título</h1>
+              <div class="h-1 w-16 bg-primary-600 rounded mt-2"></div>
+            </div>
+
+            <!-- CONTENIDO PRINCIPAL DINÁMICO -->
+            <div id="previewBodyContent" class="space-y-4 text-sm leading-relaxed text-slate-800">
+              <div class="text-center py-20 text-slate-400">
+                <i class="fa-regular fa-file-lines text-5xl mb-3 opacity-40"></i>
+                <p class="font-medium text-base text-slate-600">El lienzo está listo</p>
+                <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
+                  Selecciona una imagen, realiza un recorte, carga un Word/Excel o escribe una nota para ver el resultado en tiempo real.
+                </p>
+              </div>
+            </div>
+
+            <!-- Pie de Página -->
+            <div id="docFooterPreview" class="border-t border-slate-200 pt-3 mt-10 text-[11px] text-slate-400 flex justify-between items-center hidden">
+              <span id="footerCustomText">Generado con OmniDoc Studio</span>
+              <span>Página 1</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Barra de estado inferior del visor -->
+        <div class="px-5 py-2.5 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+            <span>Privacidad garantizada: Tus archivos nunca salen de tu dispositivo</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="docPagesEstimate">1 página estimada</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL: Enviar por Correo Personalizado -->
+  <div id="emailModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fa-solid fa-envelope text-primary-500"></i>
+          Preparar envío en Gmail
+        </h3>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Destinatario (Email):</label>
+          <input type="email" id="emailToInput" placeholder="cliente@ejemplo.com" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-2.5 text-xs text-slate-900 dark:text-white">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Asunto:</label>
+          <input type="text" id="emailSubjectInput" value="Envío de Documento PDF" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-2.5 text-xs text-slate-900 dark:text-white">
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Mensaje breve:</label>
+          <textarea id="emailBodyInput" rows="3" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-xs text-slate-900 dark:text-white">Hola, te adjunto el documento en formato PDF generado desde OmniDoc Studio.</textarea>
+        </div>
+        
+        <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200 dark:border-amber-800/50 text-[11px] text-amber-800 dark:text-amber-300">
+          <i class="fa-solid fa-circle-info mr-1"></i>
+          Se abrirá Gmail para que inicies sesión si hace falta. El PDF se descargará aparte; adjúntalo en el mensaje antes de enviarlo.
+        </div>
+      </div>
+
+      <div class="mt-5 flex items-center justify-end space-x-2">
+        <button class="modal-close-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+          Cancelar
+        </button>
+        <button id="sendEmailConfirmBtn" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-semibold shadow">
+          Abrir Gmail y descargar PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Enviar por WhatsApp -->
+  <div id="whatsappModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i class="fa-brands fa-whatsapp text-emerald-500 text-xl"></i>
+          Enviar por WhatsApp
+        </h3>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">¿Cómo quieres abrir WhatsApp?</label>
+          <select id="whatsappDestinationSelect" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-2.5 text-xs text-slate-900 dark:text-white">
+            <option value="web">Abrir WhatsApp Web y elegir chat</option>
+            <option value="phone">Enviar a un número específico</option>
+          </select>
+          <div id="whatsappPhoneField" class="hidden mt-2">
+            <label for="whatsappNumberInput" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Número con código de país:</label>
+            <input type="tel" id="whatsappNumberInput" inputmode="numeric" placeholder="Ej: 50588881234" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-2.5 text-xs text-slate-900 dark:text-white">
+          </div>
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Mensaje de acompañamiento:</label>
+          <textarea id="whatsappMessageInput" rows="3" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-xs text-slate-900 dark:text-white">Hola! Te comparto este documento en PDF generado con OmniDoc Studio.</textarea>
+        </div>
+        
+        <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-800/50 text-[11px] text-emerald-800 dark:text-emerald-300">
+          <i class="fa-solid fa-check-double mr-1"></i>
+          Se abrirá WhatsApp Web. Inicia sesión o elige tu chat; el PDF se descarga aparte y debes adjuntarlo antes de enviarlo.
+        </div>
+      </div>
+
+      <div class="mt-5 flex items-center justify-end space-x-2">
+        <button class="modal-close-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+          Cancelar
+        </button>
+        <button id="sendWhatsAppConfirmBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow">
+          Abrir WhatsApp y descargar PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Subir / Abrir en Google Drive u OneDrive -->
+  <div id="cloudModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="cloudModalTitle" class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <i id="cloudModalIcon" class="fa-brands fa-google-drive text-amber-500"></i>
+          <span>Guardar en la Nube</span>
+        </h3>
+        <button class="modal-close-btn text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div id="cloudModalInstructions" class="p-4 bg-slate-50 dark:bg-slate-750 rounded-xl text-slate-700 dark:text-slate-200 leading-relaxed border border-slate-200 dark:border-slate-700">
+          <!-- Dinámico -->
+        </div>
+
+        <div class="flex items-center justify-between p-3 rounded-xl bg-primary-50/60 dark:bg-primary-950/40 border border-primary-100 dark:border-primary-900">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-file-pdf text-rose-500 text-base"></i>
+            <div>
+              <p id="cloudModalFileName" class="font-bold text-slate-900 dark:text-white">Documento.pdf</p>
+              <p class="text-[10px] text-slate-500">Se abrirá tu cuenta para subirlo</p>
+            </div>
+          </div>
+          <span class="text-[10px] font-mono bg-white dark:bg-slate-800 px-2 py-1 rounded border border-slate-200 dark:border-slate-700">PDF</span>
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-end space-x-2">
+        <button class="modal-close-btn px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+          Cerrar
+        </button>
+        <button id="cloudModalActionBtn" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-semibold shadow flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i>
+          <span>Descargar y Abrir Nube</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GESTOR & ORGANIZADOR VISUAL DE PÁGINAS -->
+  <div id="pageOrganizerModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh]">
+      <!-- Header modal -->
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-table-cells-large text-emerald-500"></i>
+            Organizador Visual de Páginas del PDF
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Añade hojas, borra páginas o reordénalas libremente</p>
+        </div>
+        <button class="organizer-close-btn text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Barra de herramientas superior del modal -->
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4 bg-slate-50 dark:bg-slate-750 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-2">
+          <button id="modalAddBlankBtn" class="px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+            <i class="fa-solid fa-plus"></i> Añadir Hoja en Blanco
+          </button>
+          <button id="modalAppendPdfBtn" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+            <i class="fa-solid fa-paperclip"></i> Unir otro PDF externo
+          </button>
+        </div>
+        <span class="text-xs text-slate-500 dark:text-slate-400">Usa las flechas para mover o el botón rojo para borrar</span>
+      </div>
+
+      <!-- Grid de Miniaturas de Páginas -->
+      <div class="flex-1 overflow-y-auto pr-1">
+        <div id="pageOrganizerGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 p-1">
+          <!-- Rellenado dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Footer modal -->
+      <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-end">
+        <button class="organizer-close-btn px-5 py-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-xl text-xs font-bold shadow hover:bg-slate-800 transition">
+          Listo / Volver al Visor
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       MODAL: VISTA COMPLETA DEL DOCUMENTO + IMPRIMIR
+       ============================================= -->
+  <div id="fullPreviewModal" class="hidden fixed inset-0 z-[70] bg-slate-950/97 flex flex-col">
+
+    <!-- Barra superior del modal -->
+    <div class="flex items-center justify-between fp-topbar px-5 py-3 bg-slate-900 border-b border-slate-700 shadow-lg flex-shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-violet-600/30 text-violet-400 flex items-center justify-center text-base">
+          <i class="fa-solid fa-file-pdf"></i>
+        </div>
+        <div>
+          <p id="fullPreviewDocTitle" class="text-sm font-bold text-white truncate max-w-xs">Documento</p>
+          <p id="fullPreviewPageCount" class="text-[11px] text-slate-400">Cargando páginas…</p>
+        </div>
+      </div>
+
+      <div class="fp-toolbar-controls flex items-center gap-2">
+        <!-- Zoom -->
+        <button id="fpZoomOut" title="Reducir zoom" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 flex items-center justify-center text-sm transition">
+          <i class="fa-solid fa-minus"></i>
+        </button>
+        <span id="fpZoomLevel" class="text-xs font-mono text-slate-400 w-12 text-center">100%</span>
+        <button id="fpZoomIn" title="Aumentar zoom" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 flex items-center justify-center text-sm transition">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+
+        <div class="w-px h-6 bg-slate-700 mx-1"></div>
+
+        <!-- Botón Imprimir -->
+        <button id="fpPrintBtn" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-bold shadow transition">
+          <i class="fa-solid fa-print"></i>
+          <span>Imprimir Documento</span>
+        </button>
+
+        <!-- Cerrar -->
+        <button id="fpCloseBtn" title="Cerrar vista completa" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-rose-700 hover:text-white flex items-center justify-center text-sm transition ml-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Cuerpo scrollable con las páginas -->
+    <div id="fullPreviewBody" class="flex-1 overflow-y-auto bg-slate-950 flex flex-col items-center py-8 gap-6 px-4">
+      <!-- Las páginas se insertan dinámicamente aquí -->
+      <div id="fullPreviewPlaceholder" class="flex flex-col items-center justify-center text-slate-500 mt-20 gap-4">
+        <i class="fa-solid fa-spinner fa-spin text-4xl text-violet-500"></i>
+        <p class="text-sm">Cargando páginas del documento…</p>
+      </div>
+    </div>
+
+    <!-- Footer con info de atajos -->
+    <div class="flex-shrink-0 bg-slate-900 border-t border-slate-800 px-5 py-2 flex items-center justify-between text-[11px] text-slate-500">
+      <span><kbd class="bg-slate-800 border border-slate-700 rounded px-1.5 py-0.5 text-slate-300">Esc</kbd> Cerrar &nbsp;·&nbsp; <kbd class="bg-slate-800 border border-slate-700 rounded px-1.5 py-0.5 text-slate-300">Ctrl+P</kbd> Imprimir</span>
+      <span>OmniDoc Studio PRO &mdash; Vista Completa</span>
+    </div>
+
+  </div>
+
+  <!-- OVERLAY GLOBAL DE ARRASTRAR Y SOLTAR -->
+  <div id="globalDropOverlay" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex-col items-center justify-center p-6 text-white text-center pointer-events-none transition-all">
+    <div class="border-4 border-dashed border-primary-400 dark:border-primary-500 rounded-3xl p-10 max-w-md w-full bg-slate-900/90 shadow-2xl flex flex-col items-center animate-pulse">
+      <div class="w-20 h-20 rounded-2xl bg-primary-600/30 text-primary-400 flex items-center justify-center text-4xl mb-4">
+        <i class="fa-solid fa-cloud-arrow-down"></i>
+      </div>
+      <h3 class="text-xl font-bold mb-1">¡Suelta tu documento aquí!</h3>
+      <p class="text-xs text-slate-300">OmniDoc Studio abrirá tu PDF, Word, Excel, Texto o Imagen de forma instantánea.</p>
+    </div>
+  </div>
+
+  <!-- Scripts de la Aplicación -->
+  <script src="js/pdf-lib.min.js"></script>
+  <script src="js/pdf-viewer.js"></script>
+  <script src="js/pdf-editor.js"></script>
+  <script src="js/pdf-merger.js"></script>
+  <script src="js/cropper-module.js"></script>
+  <script src="js/doc-converters.js"></script>
+  <script src="js/office-converters.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
 </html>
