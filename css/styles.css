@@ -1,0 +1,499 @@
+/* ==========================================================================
+   OmniDoc Studio - Custom Styles & Print Engine
+   ========================================================================== */
+
+/* Fuente base y supresión de scroll jumps */
+html {
+  scroll-behavior: smooth;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.7);
+}
+
+/* Tab Buttons */
+.tab-btn {
+  background-color: transparent;
+  color: #64748b;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tab-btn:hover {
+  background-color: rgba(241, 245, 249, 0.8);
+  color: #1e293b;
+}
+.dark .tab-btn {
+  color: #94a3b8;
+}
+.dark .tab-btn:hover {
+  background-color: rgba(51, 65, 85, 0.5);
+  color: #f8fafc;
+}
+.tab-btn.active {
+  background-color: #e0e7ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.dark .tab-btn.active {
+  background-color: rgba(67, 56, 202, 0.3);
+  color: #c7d2fe;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+/* Action Buttons */
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.5rem;
+  border-radius: 0.875rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+}
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.25);
+}
+.action-btn:active {
+  transform: translateY(0);
+}
+
+/* Crop & Editor Mini Buttons */
+.crop-tool-btn, .format-btn {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  background-color: #ffffff;
+  color: #475569;
+  font-size: 0.75rem;
+  transition: all 0.15s ease;
+}
+.dark .crop-tool-btn, .dark .format-btn {
+  border-color: rgba(71, 85, 105, 0.8);
+  background-color: #334155;
+  color: #cbd5e1;
+}
+.crop-tool-btn:hover, .format-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+.dark .crop-tool-btn:hover, .dark .format-btn:hover {
+  background-color: #475569;
+  color: #ffffff;
+}
+
+.aspect-btn {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  background-color: #f8fafc;
+  color: #475569;
+  transition: all 0.15s ease;
+}
+.dark .aspect-btn {
+  background-color: #334155;
+  border-color: #475569;
+  color: #cbd5e1;
+}
+.aspect-btn.active {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+  color: #ffffff;
+}
+
+/* Drop Zone State */
+.drop-zone.dragover {
+  border-color: #4f46e5 !important;
+  background-color: rgba(238, 242, 255, 0.8) !important;
+  transform: scale(0.99);
+}
+.dark .drop-zone.dragover {
+  background-color: rgba(49, 46, 129, 0.3) !important;
+}
+
+/* Hoja Imprimible (A4 Preview) */
+.printable-sheet {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 4px;
+}
+
+/* Responsive preview scaling */
+@media (max-width: 1024px) {
+  .printable-sheet {
+    width: 100%;
+    min-height: auto;
+    padding: 15mm;
+  }
+}
+
+/* Tablas estilizadas en el Preview (para Excel y Reportes) */
+.preview-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1rem 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+}
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  text-align: left;
+}
+.preview-table th {
+  background-color: #f8fafc;
+  color: #1e293b;
+  font-weight: 700;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 2px solid #cbd5e1;
+  border-right: 1px solid #e2e8f0;
+}
+.preview-table td {
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  border-right: 1px solid #f1f5f9;
+  color: #334155;
+}
+.preview-table tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+
+/* Word Content Styles */
+.word-doc-content {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  line-height: 1.7;
+}
+.word-doc-content h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: #0f172a;
+}
+.word-doc-content h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 0.8rem;
+  margin-bottom: 0.4rem;
+  color: #1e293b;
+}
+.word-doc-content h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.6rem;
+  margin-bottom: 0.3rem;
+  color: #334155;
+}
+.word-doc-content p {
+  margin-bottom: 0.75rem;
+}
+.word-doc-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.word-doc-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* PDF & Universal Document Viewer Styles */
+.pdf-page-card {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  page-break-after: always;
+}
+.pdf-page-card:last-child {
+  margin-bottom: 0;
+}
+.pdf-page-canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+/* Text Document Viewer */
+.text-doc-viewer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #1e293b;
+}
+.dark .text-doc-viewer {
+  background-color: #0f172a;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+/* PDF Editor Tools & Canvas Overlay Styles */
+.pdf-edit-tool-btn {
+  color: #94a3b8;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.pdf-edit-tool-btn:hover {
+  background-color: rgba(51, 65, 85, 0.7);
+  color: #ffffff;
+}
+.pdf-edit-tool-btn.active {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+  border-color: #6366f1 !important;
+}
+
+.pdf-color-btn {
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+.pdf-color-btn:hover {
+  transform: scale(1.15);
+}
+
+.pdf-page-wrapper {
+  position: relative;
+  display: inline-block;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pdf-edit-canvas {
+  touch-action: none;
+}
+
+/* Floating Editable Text Item */
+.pdf-text-item {
+  box-sizing: border-box;
+}
+.pdf-text-item:hover .pdf-editable-text {
+  border-color: #4f46e5;
+}
+.pdf-editable-text:focus {
+  border-color: #4f46e5 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Stamp Styles */
+.pdf-stamp {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  user-select: none;
+}
+
+/* Global Drag & Drop Overlay */
+#globalDropOverlay {
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+/* ==========================================================================
+   FULL DOCUMENT PREVIEW MODAL
+   ========================================================================== */
+
+/* Pages inside the full preview body */
+.fp-page-wrapper {
+  position: relative;
+  background: white;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.fp-page-label {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  font-family: monospace;
+}
+
+/* Zoom animation on hover */
+.fp-page-wrapper:hover {
+  box-shadow: 0 12px 50px rgba(139, 92, 246, 0.35);
+}
+
+/* ==========================================================================
+   PRINT ENGINE OPTIMIZATION (@media print)
+   ========================================================================== */
+@media print {
+  /* Ocultar todos los elementos de la interfaz */
+  header,
+  footer,
+  aside,
+  #sourceTabs,
+  .lg\:col-span-5,
+  .action-btn,
+  #emailModal,
+  #whatsappModal,
+  #cloudModal,
+  #globalDropOverlay,
+  #fullPreviewModal,
+  .bg-gradient-to-r,
+  #themeToggleBtn,
+  #clearAllBtn,
+  #helpBtn,
+  .px-5.py-3.border-b,
+  .px-5.py-2.5.bg-white,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  body, html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: auto !important;
+  }
+
+  main {
+    display: block !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .lg\:col-span-7 {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #previewScrollArea {
+    background: transparent !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .printable-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    min-height: auto !important;
+    page-break-after: auto !important;
+    transform: none !important;
+  }
+
+  .pdf-page-card {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+
+  .pdf-page-canvas {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 8mm;
+  }
+}
+
+
+/* Mobile and tablet layout */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+button, input, select, textarea {
+  touch-action: manipulation;
+}
+@media (max-width: 640px) {
+  .site-header-inner {
+    height: auto !important;
+    min-height: 4rem;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+    align-items: stretch !important;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+  .site-header-inner > .flex:first-child { min-width: 0; }
+  .header-tools {
+    width: 100%;
+    margin: 0 !important;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  #openGlobalDocBtn { flex: 1 1 9rem; justify-content: center; }
+  #pwaInstallBtn { min-height: 2.5rem; }
+  #themeToggleBtn, #clearAllBtn, #helpBtn { flex: 0 0 auto; }
+  main { padding-top: 1rem !important; padding-bottom: 1rem !important; gap: 1rem !important; }
+  #sourceTabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tab-btn { min-height: 3.5rem; padding-left: 0.2rem; padding-right: 0.2rem; }
+  .action-btn { min-height: 4.75rem; padding: 0.6rem 0.25rem; }
+  #previewScrollArea { padding: 0.5rem !important; }
+  #pdfPrintableArea { width: 100% !important; min-height: auto !important; padding: 1rem !important; }
+  #pdfControlsWrapper { padding: 0.65rem; }
+  #pdfControlsWrapper > .flex { flex-wrap: wrap; gap: 0.5rem; }
+  #pdfControlsWrapper select { max-width: 100%; }
+  .preview-table-container { max-width: 100%; }
+  .preview-table { min-width: 32rem; }
+  #fullPreviewModal .fp-topbar { padding: 0.65rem; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; }
+  #fullPreviewModal .fp-toolbar-controls { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+  #fullPreviewModal #fpPrintBtn { flex: 1 1 auto; justify-content: center; }
+  #fullPreviewBody { padding: 1rem 0.5rem; }
+  #fullPreviewModal .fp-page-wrapper { max-width: 100%; }
+  #fullPreviewModal .fp-page-wrapper canvas { height: auto; }
+  #pageOrganizerModal > div { padding: 1rem; }
+}
+@media (min-width: 641px) and (max-width: 900px) {
+  .site-header-inner { height: auto !important; min-height: 4rem; padding-top: 0.5rem; padding-bottom: 0.5rem; gap: 0.5rem; }
+  .header-tools { flex-wrap: wrap; justify-content: flex-end; }
+  #pdfPrintableArea { max-width: 100%; }
+}
