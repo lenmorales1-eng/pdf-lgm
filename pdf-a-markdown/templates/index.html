@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123047">
+  <title>PDF a Markdown</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f2f5f8; color: #17232d; }
+    main { max-width: 680px; margin: 0 auto; padding: 22px 16px 40px; }
+    header { background: #123047; color: white; padding: 24px 20px; border-radius: 18px; }
+    h1 { font-size: 1.65rem; margin: 0 0 8px; }
+    header p { margin: 0; line-height: 1.5; color: #e1edf4; }
+    section { background: white; margin-top: 16px; padding: 20px; border-radius: 16px;
+      box-shadow: 0 4px 18px #102a3a0d; }
+    label { display: block; font-weight: 650; margin-bottom: 10px; }
+    input[type=file] { width: 100%; padding: 12px; border: 1px dashed #8395a2;
+      border-radius: 12px; background: #fafcfd; }
+    button { width: 100%; border: 0; border-radius: 12px; padding: 15px;
+      margin-top: 16px; background: #176b87; color: white; font-size: 1rem; font-weight: 700; }
+    button:focus, input:focus { outline: 3px solid #7fc8e0; outline-offset: 2px; }
+    .hint { font-size: .9rem; line-height: 1.5; color: #52636e; }
+    .error { color: #9f2424; background: #fff0f0; padding: 12px; border-radius: 10px; }
+    li { margin: 8px 0; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>PDF → Markdown</h1>
+    <p>Convierte documentos PDF en texto estructurado para documentación y herramientas de IA.</p>
+  </header>
+  <section>
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+    <form action="/convert" method="post" enctype="multipart/form-data">
+      <label for="pdf">Selecciona un archivo PDF</label>
+      <input id="pdf" name="pdf" type="file" accept="application/pdf,.pdf" required>
+      <p class="hint">Límite: 25 MB. Al convertir, se descargará un archivo .md.</p>
+      <button type="submit">Convertir y descargar</button>
+    </form>
+  </section>
+  <section>
+    <strong>Cómo funciona</strong>
+    <ol>
+      <li>Selecciona un PDF desde tu teléfono o computadora.</li>
+      <li>Pulsa «Convertir y descargar».</li>
+      <li>Abre el archivo Markdown con un editor de texto o una herramienta de IA.</li>
+    </ol>
+    <p class="hint">Los PDF escaneados pueden requerir OCR. La conversión no garantiza una reproducción perfecta de tablas, imágenes o fórmulas.</p>
+    <p class="hint"><strong>Privacidad:</strong> en esta configuración local, el archivo se procesa en el equipo donde se ejecuta el servidor. No publiques el servidor en internet sin HTTPS, autenticación y límites adecuados.</p>
+  </section>
+</main>
+</body>
+</html>
